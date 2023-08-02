@@ -1,0 +1,270 @@
+/* Reset default browser styles */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
+}
+
+#home {
+  display: flex;
+}
+
+#topBar {
+  display: flex;
+  margin: 0 20px 20px 20px;
+  padding: 20px;
+  background-color: #5dade2;
+  text-align: center;
+  border-radius: 0 0 30px 30px;
+}
+
+#topBar h1 {
+  color: #fff;
+  font-size: 24px;
+  margin: 0;
+  flex: 1;
+  justify-content: center;
+}
+
+#topBar #logout {
+  background-color: #fff;
+  color: #5dade2;
+  border: none;
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+#topBar #logout:hover {
+  background-color: #5dade2;
+  color: #fff;
+  box-shadow: 12px 12px 2px 1px rgba(0, 0, 255, .2);
+}
+
+#currentVideo {
+  flex: 2;
+}
+
+#videoContainer {
+  max-width: 800px;
+  margin: 0 auto;
+  background-color: #333;
+  border-radius: 8px 8px 0px 0px;
+  overflow: hidden;
+}
+
+#video {
+  width: 100%;
+}
+
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  padding: 10px;
+}
+
+.controls button {
+  background-color: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.controls button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.controls button[data-state="play"]::before {
+  content: "▶ Play";
+}
+
+.controls button[data-state="pause"]::before {
+  content: "|| Pause";
+}
+
+.controls button[data-state="stop"]::before {
+  content: "◼ Stop";
+}
+
+.controls button[data-state="mute"]::before {
+  content: "🔇Mute";
+}
+
+.controls button[data-state="unmute"]::before {
+  content: "🔊Unmute";
+}
+
+.controls button[data-state="volup"]::before {
+  content: "🔈+";
+}
+
+.controls button[data-state="voldown"]::before {
+  content: "🔉-";
+}
+
+.controls button[data-state="go-fullscreen"]::before {
+  content: "⛶";
+}
+
+.controls button[data-state="cancel-fullscreen"]::before {
+  content: "⇱";
+}
+
+.progress {
+  flex: 1;
+  height: 10px;
+  margin: 0 10px;
+}
+
+#progress {
+  width: 100%;
+  height: 100%;
+  appearance: none;
+}
+
+#progress::-webkit-progress-bar {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+#progress::-webkit-progress-value {
+  background-color: #5DADE2;
+}
+
+#progress::-moz-progress-bar {
+  background-color: #5DADE2;
+}
+
+#progress-bar {
+  display: block;
+  width: 0;
+  height: 100%;
+  background-color: #5DADE2;
+  border-radius: 4px;
+}
+
+#storedVideo {
+  flex: 1;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin-right: 20px;
+  box-shadow: 3px 3px #7FB3D5, -1em 0 .4em rgb(157, 157, 148);
+}
+
+#upload {
+  background-color: #5DADE2;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#uploadButton {
+  padding: 10px;
+  margin-left: 10px;
+  background-color: #5DADE2;
+  border-radius: 5px;
+}
+
+#list {
+  list-style: none;
+  padding: 0;
+}
+
+#list li {
+  margin-bottom: 8px;
+}
+
+#listItem {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  padding: 10px;
+  border-radius: 4px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+}
+
+#listItem #itemButton {
+  background-color: transparent;
+  border: none;
+  color: #283747;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+#listItem #itemButton:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+#listItem #deleteButton {
+  background-color: brown;
+  border: none;
+  color: #283747;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+#loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+}
+
+#videoInfo {
+  max-width: 780px;
+  margin: 0 auto;
+  background-color: #fff;
+  padding: 10px;
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+}
+
+/* fullscreen */
+
+#videoContainer[data-fullscreen=true] video::-webkit-media-controls {
+	display:none !important;
+}
+
+#videoContainer[data-fullscreen=true] {
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  z-index:9999;
+  background-color: #333;
+}
+
+#videoContainer[data-fullscreen=true] video {
+  width:100%;
+  height:100%;
+}
+
+#videoContainer[data-fullscreen=true] .controls {
+  position:absolute;
+  bottom:0;
+  left:0;
+  width:100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+#videoContainer[data-fullscreen=true] .controls .progress {
+  margin: 0;
+}
+
+#videoContainer[data-fullscreen=true] .controls button {
+  font-size: 20px;
+  padding: 10px;
+}

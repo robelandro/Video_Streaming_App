@@ -1,0 +1,3 @@
+class RiseError extends Error {
+
+}

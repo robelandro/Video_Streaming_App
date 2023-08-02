@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en-IE">
+<head>
+	<meta charset="utf-8" />
+	<title>Video Streaming</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link rel="stylesheet" href="/stylesheets/styles.css" />
+</head>
+<body>
+	<div id="topBar" class="topBar">
+		<h1>Video Streaming App</h1>
+		<button id="logout" type="button">Logout</button>
+	</div>
+	<div id="home" class="home">
+		<div id="currentVideo" class="streaming">
+			<figure id="videoContainer" data-fullscreen="false">
+				<video id="video" controls preload="metadata">
+					<source src="" type="video/mp4">
+				</video>
+				<div id="video-controls" class="controls" data-state="hidden">
+					<button id="playpause" type="button" data-state="play"></button>
+					<button id="stop" type="button" data-state="stop"></button>
+					<div class="progress">
+						<progress id="progress" value="0" min="0">
+							<span id="progress-bar"></span>
+						</progress>
+					</div>
+					<button id="mute" type="button" data-state="mute"></button>
+					<button id="volinc" type="button" data-state="volup"></button>
+					<button id="voldec" type="button" data-state="voldown"></button>
+					<button id="fs" type="button" data-state="go-fullscreen">Fullscreen</button>
+				</div>
+			</figure>
+			<div id="video-info">
+			</div>
+		</div>
+		<div id="storedVideo" class="storedVideo">
+			<button id="upload" type="button">Upload</button>
+			<br>
+			<h2> Stored Files</h1>
+			<ul id="list">
+			</ul>
+		</div>
+	</div>
+	<script src="javascripts/script.js"></script>
+</body>
+</html>
