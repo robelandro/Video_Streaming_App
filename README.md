@@ -21,8 +21,7 @@ Login Page
 ![Login](./screenshot/login.png)
 ## 📽 Demo:
 <!-- Gif Video https://i.imgur.com/578nOVk.gifv -->
-![Demo](https://i.imgur.com/578nOVk.gifv)
-<blockquote class="imgur-embed-pub" lang="en" data-id="578nOVk" data-context="false" ><a href="//imgur.com/578nOVk"></a></blockquote><script async src="//s.imgur.com/min/embed.js" charset="utf-8"></script>
+![Demo](https://i.imgur.com/578nOVk.gif)
 ## 📝 Instructions to run locally:
 - Pre-requisites:
 	-  MongoDB
