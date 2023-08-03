@@ -1,13 +1,11 @@
-import { Types } from 'mongoose';
+import { Types, Document } from 'mongoose';
 import { Response } from 'express';
 import { RedisClientType } from 'redis';
 
-interface UserType {
-  _id: Types.ObjectId;
+interface UserType extends Document {
   userName: string;
   password: string;
   listOfVideo?:[Types.ObjectId];
-  save: () => Promise<UserType>;
 }
 
 interface UserClassType {
@@ -43,7 +41,7 @@ interface IRedisClient {
 
 interface TokenJWTType{
 	generateToken: (payload: any) => string;
-	decodeToken: (token: string) => UserType;
+	decodeToken: (token: string) => Promise<string>;
 }
 
 interface JsonCacheType {
@@ -52,11 +50,16 @@ interface JsonCacheType {
   delete(key: string): void;
 }
 
+interface ErrorType extends Error{
+	status: number;
+}
+
 export { UserType, 
 	UserClassType, 
 	VideoTypeClass, 
 	VideoType, 
 	IRedisClient, 
 	TokenJWTType,
-	JsonCacheType
+	JsonCacheType,
+	ErrorType
 }

@@ -23,10 +23,10 @@ async function checkAuth(
     } else {
       const token: string = req.cookies.token;
       if (token) {
-        const user = tokejwten.decodeToken(token);
-        const isUser = (await redisClient.get(token)) === user._id.toString(); // check if the token is in the redis
+        const userID = await tokejwten.decodeToken(token);
+        const isUser = (await redisClient.get(token)) === userID; // check if the token is in the redis
         if (isUser) {
-          res.locals.user = user;
+          res.locals.userId = userID;
           next();
         } else {
           sendLoginHtml(res);

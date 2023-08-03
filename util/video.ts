@@ -2,8 +2,12 @@ import { VideoTypeClass, VideoType } from "../interface";
 import { Types } from 'mongoose';
 import { Response } from 'express';
 import Videodb from "../model/video";
+import RiseError from "./error";
 
 class Video implements VideoTypeClass {
+  _id!: Types.ObjectId;
+  date?: number | undefined;
+  filePath?: string | undefined;
   fileName: string;
   fileType: string;
   fileSize: number;
@@ -16,9 +20,6 @@ class Video implements VideoTypeClass {
 	this.fileSize = fileSize;
 	this.ispublic = ispublic || false;
   }
-  _id!: Types.ObjectId;
-  date?: number | undefined;
-  filePath?: string | undefined;
 
   /**
    * upload video handler
@@ -26,11 +27,11 @@ class Video implements VideoTypeClass {
    * @returns {Promise<VideoType>}
    */
   async upload(res: Response, fileNamePath: string): Promise<VideoType> {
-    const userId : Types.ObjectId = res.locals.user._id;
+    const userId : Types.ObjectId = res.locals.userId;
     // check the file aready exist
     const videoExist = await Videodb.findOne({ fileName: this.fileName, owner: userId });
     if (videoExist?.fileSize === this.fileSize && videoExist?.fileType === this.fileType){
-      throw new Error("File already exist");
+      throw new RiseError(400, 'File already exist');
     }
     // create new video
     const video = new Videodb({

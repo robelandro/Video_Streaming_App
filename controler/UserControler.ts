@@ -1,7 +1,8 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import user from "../util/user";
 import tokejwten from "../util/tokejwten";
 import redisClient from "../util/redis";
+import RiseError from "../util/error";
 
 class UserControler{
 
@@ -10,12 +11,12 @@ class UserControler{
      * @param req 
      * @param res 
      */
-    static async newUser(req: Request, res: Response) {
+    static async newUser(req: Request, res: Response, next: NextFunction) {
         try{
             const {userName, password} = req.body;
 
             if(!userName || !password){
-                res.status(400).send({error: 'Missing parameters'});
+                throw new RiseError(400, 'Missing parameters');
             }
             else{
                 // create new user
@@ -32,11 +33,11 @@ class UserControler{
                         maxAge: 1800000,
                         sameSite: 'none'
                     }
-                ).send({token: token});
+                ).json({token: token});
             }
         }
         catch(err: any){
-            res.status(400).send({error: err.message});
+            next(err);
         }
     }
 }

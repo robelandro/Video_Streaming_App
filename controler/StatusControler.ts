@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import fs from 'fs';
 
 /**
@@ -19,12 +19,12 @@ class StatusControler {
    * @param {Request} req
    * @param {Response} res
    */
-  static getIndex(req: Request, res: Response) {
+  static getIndex(req: Request, res: Response, next: NextFunction) {
     const header = {'Content-Type': 'text/html'};
     res.writeHead(200, header);
     fs.readFile('./view/main.html', (err, data) => {
       if (err) {
-        res.end('error');
+        next(err);
       } else {
         res.end(data);
       }

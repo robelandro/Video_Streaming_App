@@ -1,10 +1,11 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import fs from "fs";
 import Video from "../util/video";
 import user from "../util/user";
 import randomUUID from "crypto";
 import { Types } from "mongoose";
 import cache from "../util/cache";
+import RiseError from "../util/error";
 
 class VideoControler {
   /**
@@ -12,7 +13,7 @@ class VideoControler {
    * @param req
    * @param res
    */
-  static async getVideo(req: Request, res: Response) {
+  static async getVideo(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.query;
       let videoPath: string | null = null;
@@ -30,7 +31,7 @@ class VideoControler {
         // get video path
         videoPath = await user.getVideoPath(
           id as unknown as Types.ObjectId,
-          res.locals.user._id as Types.ObjectId
+          res.locals.userId as Types.ObjectId
         );
         cache.push(id as string, videoPath);
       }
@@ -62,11 +63,7 @@ class VideoControler {
       // Stream the video chunk to the client
       videoStream.pipe(res);
     } catch (err: any) {
-      res.writeHead(500, {
-        "Content-Type": "text/plain",
-      });
-      res.end(`Error: ${err}`);
-      console.log(err.message);
+      next(err);
     }
   }
 
@@ -75,7 +72,7 @@ class VideoControler {
    * @param req
    * @param res
    */
-  static async postVideo(req: Request, res: Response) {
+  static async postVideo(req: Request, res: Response, next: NextFunction) {
     try {
       // header info
       const { headers } = req;
@@ -85,7 +82,7 @@ class VideoControler {
       const fileNamePath: string = `./uploads/${randomUUID.randomUUID()}`;
       // check if file name is provided and other info about file
       if (!fileNameHeader || !fileTypeHeader || !fileSizeHeader) {
-        throw new Error("File name, type or size is not provided");
+        throw new RiseError(400, 'File name, type or size is not provided');
       } else {
         // creating uploads folder
         if (!fs.existsSync("./uploads")) {
@@ -104,10 +101,7 @@ class VideoControler {
         const file = fs.createWriteStream(fileNamePath);
         file.on("error", (err) => {
           if (err) {
-            res.writeHead(500, {
-              "Content-Type": "text/plain",
-            });
-            res.end("File upload failed");
+            throw new RiseError(400, 'Error while uploading file');
           }
         });
         req.on("data", (chunk) => {
@@ -116,7 +110,7 @@ class VideoControler {
         req.on("end", async () => {
           file.end();
           await Videos.save();
-          await user.addToVideoList(res.locals.user._id, Videos._id);
+          await user.addToVideoList(res.locals.userId, Videos._id);
           res.writeHead(200, {
             "Content-Type": "text/plain",
           });
@@ -124,7 +118,7 @@ class VideoControler {
         });
       }
     } catch (error: any) {
-      res.status(400).send({ message: error.message }).end();
+      next(error);
     }
   }
 
@@ -133,17 +127,17 @@ class VideoControler {
    * @param req
    * @param res
    */
-  static async getListVideo(req: Request, res: Response) {
+  static async getListVideo(req: Request, res: Response, next: NextFunction) {
     try {
       const { page } = req.query; // page number
-      const userId: Types.ObjectId = res.locals.user._id;
+      const userId: Types.ObjectId = res.locals.userId;
       const videos = await user.getAllVideosList(
         userId,
         parseInt(page as string)
       );
       res.status(200).send(videos).end();
     } catch (error: any) {
-      res.status(400).send({ message: error.message }).end();
+      next(error);
     }
   }
 
@@ -152,15 +146,14 @@ class VideoControler {
    * @param req 
    * @param res 
    */
-  static async deleteVideo(req: Request, res: Response) {
+  static async deleteVideo(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.body;
-      const userId: Types.ObjectId = res.locals.user._id;
+      const userId: Types.ObjectId = res.locals.userId;
       await user.deleteVideo(id, userId); // delete video from user list
-      res.status(200).send({ message: "Video deleted" }).end();
+      res.status(200).json({ message: "Video deleted" }).end();
     } catch (error: any) {
-      res.status(400).send({ message: error.message }).end();
-      console.log(error.message);
+      next(error);
     }
   }
 }

@@ -5,6 +5,7 @@ import VideoDb from "../model/video";
 import bcrypt from 'bcrypt';
 import fs from 'fs';
 import util from 'util';
+import RiseError from "./error";
 
 class User implements UserClassType {
 
@@ -19,13 +20,12 @@ class User implements UserClassType {
       // check if user exist
       const userExist = await this.checkifUserExist(userName);
       if (userExist) {
-        throw new Error('User already exist');
+        throw new RiseError(400, 'User Already Exist');
       }
       // hash password using bcrypt
       const hashPassword = await bcrypt.hash(password, 10);
       // create new user for db
       const user = new UserDb({
-        _id: new Types.ObjectId(),
         userName: userName,
         password: hashPassword
       } as UserType);
@@ -49,11 +49,11 @@ class User implements UserClassType {
         return user;
       }
       else{
-        throw new Error('Password not match');
+        throw new RiseError(400, 'Invalid Credentials');
       }
     }
     else{
-      throw new Error('User Not Found');
+      throw new RiseError(400, 'Invalid Credentials');
     }
   }
 
@@ -67,7 +67,7 @@ class User implements UserClassType {
     if (user.modifiedCount > 0){
       return true;
     }{
-      throw new Error('Unable to update')
+      throw new RiseError(400, 'Unable to add video');
     }
   }
 
@@ -101,7 +101,7 @@ class User implements UserClassType {
       return videos.listOfVideo as Types.ObjectId[];
     }
     else{
-      throw new Error('Unable to get videos');
+      throw new RiseError(400, 'Unable to get videos');
     }
   }
 
@@ -117,7 +117,7 @@ class User implements UserClassType {
       return videoPath.filePath as string;
     }
     else{
-      throw new Error('Unable to get video path');
+      throw new RiseError(400, 'path not found');
     }
   }
 
@@ -139,7 +139,22 @@ class User implements UserClassType {
       return true;
     }
     else{
-      throw new Error('Unable to delete video');
+      throw new RiseError(400, 'Unable to delete video');
+    }
+  }
+
+  /**
+   * Check Wheather the user is present or not.
+   * @param userId 
+   * @returns if user is present return true and esle return false.
+   */
+  async isUserPresent(userId: Types.ObjectId) : Promise<boolean>{
+    const user = await UserDb.findOne({_id: userId});
+    if (user){
+      return true;
+    }
+    else{
+      return false;
     }
   }
 }

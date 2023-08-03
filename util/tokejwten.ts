@@ -3,6 +3,9 @@ import fs from "fs";
 import path from "path";
 import { homedir } from "os";
 import { TokenJWTType, UserType } from "../interface";
+import user from "./user";
+import { Types } from "mongoose";
+import RiseError from "./error";
 
 /**
  * TokenJWT class used to generate and decode JWT tokens
@@ -18,8 +21,9 @@ class TokenJWT implements TokenJWTType {
   generateToken(payload: any): string {
     // create plain object from payload
     payload = JSON.parse(JSON.stringify(payload));
-    // delete password from payload
-    delete payload.password;
+    payload = {
+      _id: payload._id,
+    }
     // Read the private key from a file
     const privateKey: string = fs.readFileSync(
       path.join(homedir(), "jwtRS256.key"),
@@ -43,7 +47,7 @@ class TokenJWT implements TokenJWTType {
    * @param token 
    * @returns 
    */
-  decodeToken(token: string): UserType {
+  async decodeToken(token: string): Promise<string> {
     // Read the public key from a file
     const publicKey: string = fs.readFileSync(
       path.join(homedir(), "jwtRS256.key.pub"),
@@ -56,8 +60,16 @@ class TokenJWT implements TokenJWTType {
 
     // Decode the JWT using the public key
     const decoded = jwt.verify(token, publicKey, optionsN);
+    const userId = (decoded as UserType)._id;
 
-    return decoded as UserType;
+    // Check the user id is present or not in the database
+    const isUserPresent = await user.isUserPresent(userId as Types.ObjectId);
+    if (!isUserPresent){
+      throw new RiseError(401, "Not Authorized");
+    }
+
+    // Return the user id
+    return userId as string;
   }
 }
 

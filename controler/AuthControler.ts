@@ -1,7 +1,8 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import user from "../util/user";
 import tokejwten from "../util/tokejwten";
 import redisClient from "../util/redis";
+import RiseError from "../util/error";
 
 class AuthControler {
 
@@ -10,12 +11,12 @@ class AuthControler {
      * @param req 
      * @param res 
      */
-	static async conncet(req: Request, res: Response){
+	static async conncet(req: Request, res: Response, next: NextFunction){
         try{
             const {userName, password} = req.body;
 
             if(!userName || !password){
-                res.status(400).send({error: 'Missing parameters'});
+                throw new RiseError(400, 'Missing parameters');
             }
             else{
                 // create new user
@@ -31,11 +32,11 @@ class AuthControler {
                         maxAge: 1800000,
                         sameSite: 'none'
                     }
-                ).send({token: token});
+                ).json({token: token});
             }
         }
         catch(err: any){
-            res.status(400).send({error: err.message});
+            next(err);
         }
 	}
 
@@ -44,21 +45,21 @@ class AuthControler {
      * @param req 
      * @param res 
      */
-    static async disconnect(req: Request, res: Response){
+    static async disconnect(req: Request, res: Response, next: NextFunction){
         try{
             const token = req.cookies.token;
             if(!token){
-                res.status(400).send({error: 'Missing parameters'});
+                throw new RiseError(400, 'Missing parameters');
             }
             else{
                 // delete token in redis
                 await redisClient.del(token);
                 // return token
-                res.status(201).clearCookie('token').send({message: 'Disconnect'});
+                res.status(201).clearCookie('token').json({message: 'disconnect'});
             }
         }
         catch(err: any){
-            res.status(400).send({error: err.message});
+            next(err);
         }
     }
 }
