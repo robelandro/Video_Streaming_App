@@ -14,12 +14,6 @@ A video streaming app that allows users to upload and watch. The app is built us
 - User can upload videos
 - User can watch videos
 - Fully Authenticated (Login, Logout)
-## 📷 Screenshots:
-While the app is running
-![Screenshot](./screenshot/whilestreming.png)
-Login Page  
-![Login](./screenshot/login.png)  
-![Demo](https://i.imgur.com/578nOVk.gif) 
 ## 📽 Demo:  
 <!-- Gif Video https://i.imgur.com/578nOVk.gifv -->  
 ![Demo](https://i.imgur.com/578nOVk.gif)  
